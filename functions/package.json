@@ -1,0 +1,14 @@
+{
+  "name": "ai-executive-assistant-functions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.7.0",
+    "firebase-functions": "^7.0.6",
+    "openai": "^4.20.0",
+    "stripe": "^14.0.0"
+  }
+}

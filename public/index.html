@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <!-- =============================================
+         VIEWPORT — critical for mobile layout
+         ============================================= -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!-- =============================================
+         PWA META — Android Chrome
+         ============================================= -->
+    <meta name="theme-color" content="#080f1c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#080f1c" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- =============================================
+         PWA META — iOS Safari
+         ============================================= -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EA" />
+
+    <!-- iOS splash screens (portrait, common sizes) -->
+    <link rel="apple-touch-startup-image"
+      href="/splash/splash-1290x2796.png"
+      media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image"
+      href="/splash/splash-1179x2556.png"
+      media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image"
+      href="/splash/splash-1170x2532.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image"
+      href="/splash/splash-1125x2436.png"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image"
+      href="/splash/splash-750x1334.png"
+      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+
+    <!-- =============================================
+         ICONS
+         ============================================= -->
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png" />
+
+    <!-- iOS home screen icon (must be PNG, no rounded corners — iOS applies them) -->
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+
+    <!-- =============================================
+         PWA MANIFEST
+         ============================================= -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- =============================================
+         FONTS
+         ============================================= -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <title>Executive Assistant — RMcManus Holdings</title>
+
+    <!-- =============================================
+         BASE STYLES — mobile normalization
+         ============================================= -->
+    <style>
+      /* Hard reset */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html {
+        height: -webkit-fill-available; /* iOS Safari fix */
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #060d18;
+        /* Use dvh (dynamic viewport height) with fallback for iOS */
+        min-height: 100vh;
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+        overscroll-behavior: none; /* prevent pull-to-refresh */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Prevent text size adjustment on orientation change */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      #root {
+        height: 100vh;
+        height: 100dvh;
+        height: -webkit-fill-available;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Scrollbars — desktop only (hidden on mobile by default) */
+      @media (hover: hover) {
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #060d18; }
+        ::-webkit-scrollbar-thumb { background: #1e2a3a; border-radius: 3px; }
+      }
+
+      /* Textarea — no zoom on focus in iOS (font-size must be >= 16px) */
+      textarea, input {
+        font-size: 16px !important; /* prevents iOS zoom */
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 0; /* iOS adds radius by default */
+      }
+
+      /* Safe area insets for notch / home indicator */
+      .safe-top    { padding-top:    env(safe-area-inset-top, 0px); }
+      .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .safe-left   { padding-left:   env(safe-area-inset-left, 0px); }
+      .safe-right  { padding-right:  env(safe-area-inset-right, 0px); }
+
+      /* Smooth scrolling in chat (momentum scrolling on iOS) */
+      .messages-scroll {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        overscroll-behavior-y: contain;
+      }
+
+      /* Typing animation keyframe */
+      @keyframes pulse {
+        0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+        30%            { opacity: 1;   transform: scale(1);   }
+      }
+
+      /* Mobile-specific layout adjustments */
+      @media (max-width: 640px) {
+        /* Tighten spacing */
+        .ea-header { padding: 12px 16px 10px !important; }
+        .ea-advisor-bar { padding: 8px 16px !important; }
+        .ea-messages { padding: 16px !important; }
+        .ea-input-area { padding: 10px 12px !important; }
+
+        /* Full-width messages on mobile */
+        .ea-message-bubble { max-width: 88% !important; }
+
+        /* Larger touch targets */
+        .ea-send-btn {
+          width: 48px !important;
+          height: 48px !important;
+          font-size: 22px !important;
+        }
+
+        /* Advisor bar scrolls horizontally on mobile instead of wrapping */
+        .ea-advisor-bar {
+          flex-wrap: nowrap !important;
+          overflow-x: auto !important;
+          gap: 12px !important;
+        }
+        .ea-advisor-bar::-webkit-scrollbar { display: none; }
+
+        /* Tighter message spacing */
+        .ea-message { margin-bottom: 14px !important; }
+
+        /* Compact header on mobile */
+        .ea-header-title { font-size: 16px !important; }
+        .ea-header-sub   { display: none !important; } /* hide on very small screens */
+        .ea-new-btn      { padding: 6px 12px !important; font-size: 12px !important; }
+      }
+
+      /* Keyboard-open class — added via JS when input is focused on mobile */
+      body.keyboard-open .ea-advisor-bar {
+        display: none; /* hide advisor bar to save space when keyboard is open */
+      }
+
+      /* Install prompt banner */
+      .pwa-install-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #0d1220;
+        border-top: 1px solid #1e2a3a;
+        padding: 14px 20px;
+        padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 200;
+        animation: slideUp 0.3s ease;
+      }
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to   { transform: translateY(0); }
+      }
+      .pwa-install-banner img {
+        width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      }
+      .pwa-install-banner-text { flex: 1; }
+      .pwa-install-banner-title {
+        font-size: 13px; font-weight: 700; color: #f0f4ff;
+        font-family: 'Inter', sans-serif;
+      }
+      .pwa-install-banner-sub {
+        font-size: 11px; color: #4a5568; margin-top: 1px;
+        font-family: 'Inter', sans-serif;
+      }
+      .pwa-install-btn {
+        padding: 8px 16px;
+        background: #2a5280; border: none; border-radius: 8px;
+        color: #fff; font-size: 13px; font-weight: 600;
+        cursor: pointer; white-space: nowrap;
+        font-family: 'Inter', sans-serif;
+      }
+      .pwa-dismiss-btn {
+        background: none; border: none;
+        color: #4a5568; font-size: 18px; cursor: pointer;
+        padding: 4px; line-height: 1;
+      }
+
+      /* Notification permission prompt */
+      .notification-prompt {
+        background: #0d1824;
+        border: 1px solid #1e3a5c;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin: 12px 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Inter', sans-serif;
+      }
+      .notification-prompt-icon { font-size: 22px; flex-shrink: 0; }
+      .notification-prompt-text { flex: 1; }
+      .notification-prompt-title {
+        font-size: 13px; font-weight: 600; color: #a0c4ff;
+      }
+      .notification-prompt-sub {
+        font-size: 11px; color: #4a5568; margin-top: 2px;
+      }
+      .notification-enable-btn {
+        padding: 7px 14px;
+        background: #1a3a5c; border: 1px solid #2a5280;
+        border-radius: 8px; color: #5dade2;
+        font-size: 12px; font-weight: 600;
+        cursor: pointer; white-space: nowrap;
+        font-family: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+      // ===================================================
+      // KEYBOARD DETECTION — adds class to body on mobile
+      // so CSS can hide advisor bar when keyboard opens
+      // ===================================================
+      if ('visualViewport' in window) {
+        let lastHeight = window.visualViewport.height;
+        window.visualViewport.addEventListener('resize', () => {
+          const current = window.visualViewport.height;
+          const diff = lastHeight - current;
+          if (diff > 100) {
+            document.body.classList.add('keyboard-open');
+          } else if (diff < -50) {
+            document.body.classList.remove('keyboard-open');
+          }
+          lastHeight = current;
+        });
+      }
+    </script>
+  </body>
+</html>

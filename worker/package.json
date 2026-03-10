@@ -1,0 +1,12 @@
+{
+  "name": "ea-ops-worker",
+  "version": "1.0.0",
+  "description": "EA Local Ops Worker — polls Firebase for queued jobs and executes them on this machine.",
+  "main": "ops-worker.js",
+  "scripts": {
+    "start": "node ops-worker.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

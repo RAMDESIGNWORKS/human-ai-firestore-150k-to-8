@@ -1,0 +1,8 @@
+{
+  "HOST_MONITOR_TOKEN": "YOUR_HOST_MONITOR_TOKEN_HERE",
+  "OWNER_ID": "YOUR_FIREBASE_UID_HERE",
+  "DEVICE_ID": "your-pc-name",
+  "PROJECTS_ROOT": "D:\\YOUR\\PROJECTS\\ROOT",
+  "SERVICE_ACCOUNT_PATH": "./service-account.json",
+  "INDEX_URL": "https://us-central1-YOUR_FIREBASE_PROJECT.cloudfunctions.net/updateMachineIndex"
+}

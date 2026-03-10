@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — RMcManus Holdings Executive Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0f1a;
+      color: #d0d8e8;
+      line-height: 1.75;
+      padding: 48px 24px 72px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+    .logo { font-size: 13px; color: #4a5568; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 32px; }
+    h1 { font-size: 28px; font-weight: 700; color: #f0f4ff; margin-bottom: 6px; }
+    .updated { font-size: 13px; color: #4a6080; margin-bottom: 40px; }
+    h2 { font-size: 14px; font-weight: 700; color: #a0c4ff; text-transform: uppercase; letter-spacing: 0.8px; margin: 36px 0 10px; }
+    p { margin-bottom: 14px; color: #b0bdd0; }
+    ul { margin: 8px 0 14px 20px; color: #b0bdd0; }
+    li { margin-bottom: 4px; }
+    a { color: #5ba3f5; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .divider { border: none; border-top: 1px solid #1a2a3a; margin: 40px 0; }
+    .footer { font-size: 12px; color: #3a4a5a; margin-top: 48px; }
+    .footer a { color: #4a6080; }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: #0d1a2a;
+      border: 1px solid #1e3a5c;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #5ba3f5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">RMcManus Holdings LLC &nbsp;·&nbsp; Executive Assistant</div>
+    <span class="badge">Internal Use Only</span>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: March 7, 2026</p>
+
+    <p>This Privacy Policy describes how RMcManus Holdings LLC ("we", "us") collects, stores, and uses data within the Executive Assistant application ("Application"). This Application is an internal operational tool restricted to authorized RMcManus Holdings LLC personnel.</p>
+
+    <h2>Data We Collect</h2>
+    <p><strong style="color:#c8d8f0">Authentication data:</strong></p>
+    <ul>
+      <li>Google account email address and display name (via Firebase Authentication)</li>
+      <li>Firebase user ID (UID) used to scope all stored data</li>
+    </ul>
+    <p><strong style="color:#c8d8f0">Google OAuth tokens (when Google is connected):</strong></p>
+    <ul>
+      <li>OAuth 2.0 access token and refresh token for Google Calendar, Gmail, and Google Contacts</li>
+      <li>These tokens are stored encrypted in Google Cloud Secret Manager or Firestore, accessible only to the Application's backend functions</li>
+    </ul>
+    <p><strong style="color:#c8d8f0">Application data:</strong></p>
+    <ul>
+      <li>Chat session history and AI conversation transcripts</li>
+      <li>Tasks, to-do items, and completion records</li>
+      <li>Memory facts and notes saved by the AI assistant</li>
+      <li>Push notification device tokens (FCM tokens) for task reminders</li>
+    </ul>
+    <p><strong style="color:#c8d8f0">Operational data:</strong></p>
+    <ul>
+      <li>Desktop automation job queue entries and results</li>
+      <li>Machine index data from the local operations worker (file paths, installed software index)</li>
+      <li>Session metadata (timestamps, session IDs)</li>
+    </ul>
+
+    <h2>How We Use This Data</h2>
+    <ul>
+      <li>To authenticate authorized users and maintain session state</li>
+      <li>To provide AI-assisted executive assistant features (scheduling, drafting, task management)</li>
+      <li>To access Google Calendar, Gmail, and Contacts on the authorized user's behalf</li>
+      <li>To deliver push notifications for task reminders and alerts</li>
+      <li>To route and execute approved desktop automation workflows</li>
+      <li>To persist memory, tasks, and context across sessions</li>
+    </ul>
+
+    <h2>Third-Party Services</h2>
+    <p>The following third-party services process data as part of normal Application operation:</p>
+    <ul>
+      <li><strong style="color:#c8d8f0">Google Firebase / Google Cloud Platform</strong> — authentication, Firestore database, Cloud Functions, Firebase Hosting, Secret Manager, and Cloud Messaging</li>
+      <li><strong style="color:#c8d8f0">OpenAI</strong> — AI language model processing. Chat messages and tool context are sent to OpenAI's API for response generation. See <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener">OpenAI's Privacy Policy</a>.</li>
+      <li><strong style="color:#c8d8f0">Google APIs</strong> — Calendar, Gmail, and Contacts APIs are accessed using stored OAuth tokens on behalf of the authorized user</li>
+    </ul>
+    <p>No data is shared with advertising networks, data brokers, or any third party beyond those listed above.</p>
+
+    <h2>Google API Data Use Disclosure</h2>
+    <p>This Application's use of data received from Google APIs, including Calendar, Gmail, and Contacts, is limited to providing executive assistant functionality to the authorized user. This data is not used to train AI models, is not shared with third parties other than OpenAI (solely for generating responses), and is not used for advertising purposes. This Application complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+    <h2>Data Storage and Security</h2>
+    <ul>
+      <li>All data is stored on Google Cloud (Firebase) infrastructure in the <strong style="color:#c8d8f0">us-central1</strong> region</li>
+      <li>Data is encrypted in transit via TLS/HTTPS and encrypted at rest by Google Cloud's default encryption</li>
+      <li>OAuth tokens are stored in Firestore with Firestore Security Rules restricting access to the authenticated owner only</li>
+      <li>Access to backend functions is restricted via Firebase Authentication token verification</li>
+    </ul>
+
+    <h2>Data Retention</h2>
+    <ul>
+      <li>Chat sessions and tasks are retained indefinitely until manually deleted by the user</li>
+      <li>Google OAuth tokens are refreshed automatically and remain until the user revokes access</li>
+      <li>Push notification tokens are retained until the device token changes or is explicitly removed</li>
+    </ul>
+
+    <h2>Revoking Google Access</h2>
+    <p>You may revoke the Application's access to your Google account at any time through your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account Permissions</a> page. Removing access will disable Calendar, Gmail, and Contacts features in the Application.</p>
+
+    <h2>Your Rights</h2>
+    <ul>
+      <li>As an authorized user, you have full access to and ownership of your data stored within the Application</li>
+      <li>Data can be deleted by contacting an administrator of the Firebase project or directly through the Firestore console</li>
+    </ul>
+
+    <h2>Changes to This Policy</h2>
+    <p>This policy may be updated as the Application evolves. The "Last updated" date above reflects the most recent revision.</p>
+
+    <hr class="divider" />
+
+    <div class="footer">
+      <a href="/terms.html">Terms of Service</a>
+      &nbsp;·&nbsp; &copy; 2026 RMcManus Holdings LLC — Internal Use Only
+    </div>
+  </div>
+</body>
+</html>

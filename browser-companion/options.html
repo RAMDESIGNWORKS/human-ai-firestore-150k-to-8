@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>EA Companion Settings</title>
+    <style>
+      body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; max-width: 740px; }
+      label { display: block; margin: 12px 0 6px; font-weight: 600; }
+      input { width: 100%; box-sizing: border-box; padding: 10px; }
+      button { margin-top: 14px; padding: 10px 14px; }
+      .hint { color: #555; font-size: 12px; margin-top: 8px; }
+      .ok { color: #0b7a30; }
+    </style>
+  </head>
+  <body>
+    <h1>EA Companion Settings</h1>
+    <label for="endpointUrl">Endpoint URL</label>
+    <input id="endpointUrl" placeholder="https://us-central1-<project>.cloudfunctions.net/browserCompanionIngest" />
+
+    <label for="companionToken">Companion Token</label>
+    <input id="companionToken" placeholder="Set from Firebase secret BROWSER_COMPANION_TOKEN" />
+
+    <label for="ownerId">Owner ID</label>
+    <input id="ownerId" placeholder="Your stable user ID (for example your Firebase auth uid)" />
+
+    <button id="saveBtn">Save</button>
+    <div id="status" class="hint"></div>
+    <div class="hint">Security note: never store or paste account passwords here. Use site login sessions and password manager directly in browser.</div>
+    <script src="options.js"></script>
+  </body>
+</html>

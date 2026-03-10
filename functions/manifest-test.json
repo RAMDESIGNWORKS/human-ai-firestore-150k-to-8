@@ -1,0 +1,88 @@
+{
+  "endpoints": {
+    "eaChat": {
+      "availableMemoryMb": null,
+      "timeoutSeconds": null,
+      "minInstances": null,
+      "maxInstances": null,
+      "ingressSettings": null,
+      "concurrency": null,
+      "serviceAccountEmail": null,
+      "vpc": null,
+      "platform": "gcfv2",
+      "secretEnvironmentVariables": [
+        {
+          "key": "OPENAI_API_KEY"
+        }
+      ],
+      "labels": {},
+      "callableTrigger": {},
+      "entryPoint": "eaChat"
+    },
+    "getEaSessions": {
+      "availableMemoryMb": null,
+      "timeoutSeconds": null,
+      "minInstances": null,
+      "maxInstances": null,
+      "ingressSettings": null,
+      "concurrency": null,
+      "serviceAccountEmail": null,
+      "vpc": null,
+      "platform": "gcfv2",
+      "labels": {},
+      "callableTrigger": {},
+      "entryPoint": "getEaSessions"
+    },
+    "getEaSession": {
+      "availableMemoryMb": null,
+      "timeoutSeconds": null,
+      "minInstances": null,
+      "maxInstances": null,
+      "ingressSettings": null,
+      "concurrency": null,
+      "serviceAccountEmail": null,
+      "vpc": null,
+      "platform": "gcfv2",
+      "labels": {},
+      "callableTrigger": {},
+      "entryPoint": "getEaSession"
+    },
+    "savePushToken": {
+      "availableMemoryMb": null,
+      "timeoutSeconds": null,
+      "minInstances": null,
+      "maxInstances": null,
+      "ingressSettings": null,
+      "concurrency": null,
+      "serviceAccountEmail": null,
+      "vpc": null,
+      "platform": "gcfv2",
+      "labels": {},
+      "callableTrigger": {},
+      "entryPoint": "savePushToken"
+    },
+    "sendEaReminder": {
+      "availableMemoryMb": null,
+      "timeoutSeconds": null,
+      "minInstances": null,
+      "maxInstances": null,
+      "ingressSettings": null,
+      "concurrency": null,
+      "serviceAccountEmail": null,
+      "vpc": null,
+      "platform": "gcfv2",
+      "labels": {},
+      "callableTrigger": {},
+      "entryPoint": "sendEaReminder"
+    }
+  },
+  "specVersion": "v1alpha1",
+  "requiredAPIs": [],
+  "extensions": {},
+  "params": [
+    {
+      "type": "secret",
+      "name": "OPENAI_API_KEY"
+    }
+  ]
+}

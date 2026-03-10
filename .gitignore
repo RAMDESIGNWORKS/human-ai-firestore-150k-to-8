@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+functions/node_modules/
+
+# Build
+build/
+.firebase/
+
+# Environment — never commit
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Firebase emulator
+.firebaserc.local
+
+# Plaintext token files — must never be committed
+HOST_MONITOR_TOKEN.txt
+*.token.txt
+
+# Firebase service account key — contains private key, never commit
+worker/service-account.json
+*service-account*.json
+
+# Local worker config — contains live token and UID, never commit
+worker/worker-config.json
+
+# AI session temp directories — leftover working dirs from AI tools
+tmpclaude-*/

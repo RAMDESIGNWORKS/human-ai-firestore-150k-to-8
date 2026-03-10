@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Allowlist ────────────────────────────────────────────────
+    // Only these three emails can authenticate at all.
+    function isAllowed() {
+      return request.auth != null && request.auth.token.email in [
+        'admin@ramdesignworks.com',
+        'r0dmac522@gmail.com',
+        'r0dger@hotmail.com'
+      ];
+    }
+
+    // ── Ownership helpers ────────────────────────────────────────
+    // For documents that carry a uid field.
+    function isOwner() {
+      return isAllowed() && resource.data.uid == request.auth.uid;
+    }
+    // For documents that carry an ownerId field (ops jobs, host monitor).
+    function isOpsOwner() {
+      return isAllowed() && resource.data.ownerId == request.auth.uid;
+    }
+    // For new documents being written — check the incoming data instead.
+    function writingAsOwner() {
+      return isAllowed() && request.resource.data.uid == request.auth.uid;
+    }
+    function writingAsOpsOwner() {
+      return isAllowed() && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    // ── Per-user data: scoped to the authenticated user ──────────
+    match /users/{uid}/{document=**} {
+      allow read, write: if isAllowed() && request.auth.uid == uid;
+    }
+
+    // ── Sessions: user owns their own sessions ───────────────────
+    match /ea_sessions/{sessionId} {
+      allow read, update, delete: if isOwner();
+      allow create: if writingAsOwner();
+      match /messages/{msgId} {
+        allow read, write: if isAllowed() &&
+          get(/databases/$(database)/documents/ea_sessions/$(sessionId)).data.uid == request.auth.uid;
+      }
+    }
+
+    // ── Tasks: user owns their own tasks ─────────────────────────
+    match /ea_tasks/{taskId} {
+      allow read, update, delete: if isOwner();
+      allow create: if writingAsOwner();
+    }
+
+    // ── Agent pending approvals ───────────────────────────────────
+    match /ea_agent_pending/{pendingId} {
+      allow read, update, delete: if isOwner();
+      allow create: if writingAsOwner();
+    }
+
+    // ── Ops jobs: owner-scoped ────────────────────────────────────
+    match /ops_jobs/{jobId} {
+      allow read, update, delete: if isOpsOwner();
+      allow create: if writingAsOpsOwner();
+    }
+
+    // ── Host monitor data: owner-scoped ──────────────────────────
+    match /host_monitor_events/{eventId} {
+      allow read, update, delete: if isOpsOwner();
+      allow create: if writingAsOpsOwner();
+    }
+    match /host_monitor_latest/{docId} {
+      allow read, update, delete: if isOpsOwner();
+      allow create: if writingAsOpsOwner();
+    }
+
+    // ── Browser snapshots: owner-scoped ──────────────────────────
+    match /browser_snapshots/{snapId} {
+      allow read, update, delete: if isOpsOwner();
+      allow create: if writingAsOpsOwner();
+    }
+
+    // ── Facts and memory: user-scoped ────────────────────────────
+    match /ea_facts/{factId} {
+      allow read, update, delete: if isOwner();
+      allow create: if writingAsOwner();
+    }
+
+    // ── Integration registry (Google connection status) ────────────
+    match /ea_integrations/{uid} {
+      allow read, write: if isAllowed() && request.auth.uid == uid;
+    }
+
+    // ── Automation events: user-scoped ────────────────────────────
+    match /automation_events/{eventId} {
+      allow read, update, delete: if isOwner();
+      allow create: if writingAsOwner();
+    }
+
+    // ── Push tokens: user-scoped ─────────────────────────────────
+    // Stored under users/{uid}/pushTokens/{token} — covered by the
+    // users/{uid}/{document=**} rule above.
+
+    // ── System ops (key rotation reminders, runner capacity) ──────
+    // Write-only from Cloud Functions; clients may read their own alerts.
+    match /ea_ops/{docId} {
+      allow read: if isAllowed();
+      allow write: if false; // Cloud Functions only (Admin SDK bypasses rules)
+    }
+    match /ea_ops_events/{eventId} {
+      allow read: if isAllowed();
+      allow write: if false; // Cloud Functions only
+    }
+
+    // ── Deny everything else ─────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

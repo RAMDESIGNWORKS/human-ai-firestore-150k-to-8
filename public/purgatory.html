@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Access Restricted — Executive Assistant</title>
+
+  <!-- Firebase compat SDK via CDN (same project as the React app) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #060d18;
+      color: #e8edf5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 380px;
+      background: #0d1220;
+      border: 1px solid #1e2a3a;
+      border-radius: 20px;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lock-icon {
+      font-size: 40px;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f0f4ff;
+      letter-spacing: -0.4px;
+      text-align: center;
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #4a5568;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #0d1824;
+      border: 1px solid #2a3a4a;
+      border-radius: 12px;
+      color: #e8edf5;
+      font-size: 16px; /* prevents iOS zoom */
+      font-family: inherit;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      margin-bottom: 10px;
+      transition: border-color 0.15s;
+    }
+
+    input:focus {
+      border-color: #2a5280;
+    }
+
+    .password-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .password-wrap input {
+      margin-bottom: 0;
+      padding-right: 48px;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #4a5568;
+      font-size: 18px;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      min-height: 50px;
+      background: #2a5280;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 4px;
+      -webkit-appearance: none;
+      transition: opacity 0.15s;
+    }
+
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .error-msg {
+      font-size: 13px;
+      color: #f1948a;
+      text-align: center;
+      min-height: 18px;
+      padding: 4px 0 0;
+    }
+
+    /* IP / trace strip */
+    .trace-strip {
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px 14px;
+      background: rgba(255, 0, 0, 0.04);
+      border: 1px solid rgba(255, 50, 50, 0.12);
+      border-radius: 10px;
+      font-size: 11px;
+      color: #6b3535;
+      letter-spacing: 0.03em;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+
+    .trace-strip span { color: #a04040; font-weight: 600; }
+
+    .footer {
+      font-size: 11px;
+      color: #1e2a3a;
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    /* hidden logout trap */
+    .terminal-logout {
+      margin-top: auto;
+      padding: 24px 0 8px;
+      background: none;
+      border: none;
+      color: transparent;
+      font-size: 10px;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="lock-icon">🔒</div>
+    <h1>Executive Assistant</h1>
+    <p class="sub">RMcManus Holdings LLC — Authorized Access Only</p>
+
+    <form id="login-form" style="width:100%">
+      <input id="email" type="email" placeholder="Email" autocomplete="email" required />
+
+      <div class="password-wrap">
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password" required />
+        <button type="button" class="toggle-pw" id="toggle-pw" aria-label="Toggle password visibility">👁</button>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <button class="submit-btn" type="submit" id="submit-btn">Sign In</button>
+    </form>
+
+    <div class="trace-strip" id="trace-strip">
+      Terminal trace active &nbsp;·&nbsp; IP: <span id="ip-display">resolving…</span>
+    </div>
+  </div>
+
+  <p class="footer">Private access only · RMcManus Holdings LLC</p>
+
+  <button class="terminal-logout" id="logout-btn" tabindex="-1">[ TERMINAL LOGOUT ]</button>
+
+  <script>
+    // ── Firebase config (public client config — safe to embed) ──────────
+    const firebaseConfig = {
+      apiKey:            'AIzaSyA_Ady_SFEFaW1DZNwX-9aUQ-DhOO7oVoU',
+      authDomain:        'ramdesignworks-exec-staff.firebaseapp.com',
+      projectId:         'ramdesignworks-exec-staff',
+      storageBucket:     'ramdesignworks-exec-staff.firebasestorage.app',
+      messagingSenderId: '347930374163',
+      appId:             '1:347930374163:web:17c8e015df86c78504cfe6',
+    };
+
+    const ALLOWED_EMAILS = [
+      'admin@ramdesignworks.com',
+      'r0dmac522@gmail.com',
+      'r0dger@hotmail.com',
+    ];
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // ── If already authorized, go straight to the app ──────────────────
+    auth.onAuthStateChanged((user) => {
+      if (user && ALLOWED_EMAILS.includes((user.email || '').toLowerCase())) {
+        window.location.replace('/');
+      }
+    });
+
+    // ── IP trace (visual deterrent) ─────────────────────────────────────
+    fetch('https://api.ipify.org?format=json')
+      .then((r) => r.json())
+      .then((d) => { document.getElementById('ip-display').textContent = d.ip; })
+      .catch(() => { document.getElementById('ip-display').textContent = 'unresolved'; });
+
+    // ── Password toggle ─────────────────────────────────────────────────
+    const pwInput  = document.getElementById('password');
+    const toggleBtn = document.getElementById('toggle-pw');
+    toggleBtn.addEventListener('click', () => {
+      const isText = pwInput.type === 'text';
+      pwInput.type = isText ? 'password' : 'text';
+      toggleBtn.textContent = isText ? '👁' : '🙈';
+    });
+
+    // ── Login form handler ──────────────────────────────────────────────
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById('email').value.trim();
+      const password = pwInput.value;
+      const btn      = document.getElementById('submit-btn');
+      const errorEl  = document.getElementById('error-msg');
+
+      btn.disabled    = true;
+      btn.textContent = 'Verifying…';
+      errorEl.textContent = '';
+
+      try {
+        const result = await auth.signInWithEmailAndPassword(email, password);
+
+        if (!ALLOWED_EMAILS.includes((result.user.email || '').toLowerCase())) {
+          await auth.signOut();
+          errorEl.textContent = 'Access denied. This account is not authorized.';
+          return;
+        }
+
+        window.location.replace('/');
+      } catch (err) {
+        const messages = {
+          'auth/user-not-found':      'No account found with that email.',
+          'auth/wrong-password':      'Incorrect password.',
+          'auth/invalid-credential':  'Invalid credentials.',
+          'auth/invalid-email':       'Invalid email address.',
+          'auth/too-many-requests':   'Too many attempts. Wait a few minutes.',
+          'auth/user-disabled':       'This account has been disabled.',
+          'auth/network-request-failed': 'Network error. Check your connection.',
+        };
+        errorEl.textContent = messages[err.code] || `Sign-in failed (${err.code || 'unknown'})`;
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+
+    // ── Terminal logout (hidden safety valve) ───────────────────────────
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      auth.signOut().catch(() => {});
+    });
+  </script>
+
+</body>
+</html>
